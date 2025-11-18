@@ -1,0 +1,15 @@
+cant 1
+dont 5
+else 1
+it 1
+my 1
+no 2
+oh 3
+on 1
+ooh 2
+right 1
+there 1
+to 1
+whoa 12
+why 1
+wrong 1

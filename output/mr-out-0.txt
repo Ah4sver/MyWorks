@@ -1,0 +1,10 @@
+are 2
+baby 1
+can 2
+care 1
+i 7
+know 3
+love 2
+me 4
+more 1
+say 1

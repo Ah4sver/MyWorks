@@ -1,0 +1,6 @@
+i	1
+know	1
+are	1
+i	1
+love	1
+care	1
