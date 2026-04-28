@@ -1,0 +1,7 @@
+i	1
+know	1
+can	1
+i	1
+can	1
+i	1
+say	1
