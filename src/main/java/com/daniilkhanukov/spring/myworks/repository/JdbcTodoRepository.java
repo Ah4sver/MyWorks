@@ -72,6 +72,10 @@ public class  JdbcTodoRepository {
     }
 
     public long countCompleted() {
-        return jdbcTemplate.queryForObject("SELECT count(*) FROM todos WHERE completed = true", Long.class);
+        Long result = jdbcTemplate.queryForObject(
+                "SELECT count(*) FROM todos WHERE completed = true",
+                Long.class
+        );
+        return result != null ? result : 0L;
     }
 }

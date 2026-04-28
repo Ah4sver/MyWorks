@@ -23,7 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 @DisplayName("Integration tests for TodoController")
-public class TodoControllerTest {
+class TodoControllerTest {
 
     @Container
     static PostgreSQLContainer<?> postgres =

@@ -21,6 +21,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class TodoService {
 
+    private static final String TODO_NOT_FOUND = "Todo not found with id: ";
+
     private final JdbcTodoRepository repository;
     private final TodoMapper mapper;
     private final MeterRegistry meterRegistry;
@@ -35,13 +37,11 @@ public class TodoService {
     @Cacheable(value = "todos", key = "{#completed, #limit, #offset}")
     public List<TodoDto> getAll(Boolean completed, int limit, int offset) {
         List<Todo> list = (completed == null) ? repository.findAll(limit, offset) : repository.findByCompleted(completed, limit, offset);
-        return list.stream().map(mapper::toDto).collect(Collectors.toList());
+        return list.stream().map(mapper::toDto).toList();
     }
 
     public TodoDto getById(Long id) {
-//        Todo dto = repository.findById(id).orElseThrow(() -> new NotFoundException("Todo not found with id: " + id));
-//        return toDto(dto);
-        return repository.findById(id).map(mapper::toDto).orElseThrow(() -> new NotFoundException("Todo not found with id: " + id));
+        return repository.findById(id).map(mapper::toDto).orElseThrow(() -> new NotFoundException(TODO_NOT_FOUND + id));
     }
 
     @CacheEvict(value = "todos", allEntries = true)
@@ -50,57 +50,28 @@ public class TodoService {
         t.setCompleted(dto.getCompleted() != null && dto.getCompleted());
         Todo saved = repository.save(t);
         return mapper.toDto(saved);
-//        Todo todo = new Todo();
-//        todo.setTitle(dto.getTitle());
-//        todo.setDescription(dto.getDescription());
-//        todo.setCompleted(dto.getCompleted() != null ? dto.getCompleted() : false);
-//        Todo saved = repository.save(todo);
-//        return toDto(saved);
     }
 
     @CacheEvict(value = "todos", allEntries = true)
     public TodoDto update(Long id, TodoDto dto) {
-        Todo existing = repository.findById(id).orElseThrow(() -> new NotFoundException("Todo not found with id: " + id));
+        Todo existing = repository.findById(id).orElseThrow(() -> new NotFoundException(TODO_NOT_FOUND + id));
         existing.setTitle(dto.getTitle());
         existing.setDescription(dto.getDescription());
         if (dto.getCompleted() != null) existing.setCompleted(dto.getCompleted());
         repository.save(existing);
         return mapper.toDto(existing);
-//        Todo todo = repository.findById(id).orElseThrow(() -> new NotFoundException("Todo not found with id: " + id));
-//        todo.setTitle(dto.getTitle());
-//        todo.setDescription(dto.getDescription());
-//        if (dto.getCompleted() != null) {
-//            todo.setCompleted(dto.getCompleted());
-//        }
-//        Todo saved = repository.save(todo);
-//        return toDto(saved);
     }
 
     @CacheEvict(value = "todos", allEntries = true)
     public void delete(Long id) {
         repository.deleteById(id);
-//        if (!repository.existsById(id)) throw new NotFoundException("Todo not found with id: " + id);
-//        repository.deleteById(id);
     }
 
     @CacheEvict(value = "todos", allEntries = true)
     public TodoDto toggle(Long id) {
-        Todo t = repository.findById(id).orElseThrow(() -> new NotFoundException("Todo not found with id: " + id));
+        Todo t = repository.findById(id).orElseThrow(() -> new NotFoundException(TODO_NOT_FOUND + id));
         t.setCompleted(!t.isCompleted());
         repository.save(t);
         return mapper.toDto(t);
-//        Todo todo = repository.findById(id).orElseThrow(() -> new NotFoundException("Todo not found with id: " + id));
-//        todo.setCompleted(!todo.isCompleted());
-//        return toDto(repository.save(todo));
     }
-
-//    private TodoDto toDto(Todo todo) {
-//        TodoDto dto = new TodoDto();
-//        dto.setId(todo.getId());
-//        dto.setTitle(todo.getTitle());
-//        dto.setDescription(todo.getDescription());
-//        dto.setCompleted(todo.isCompleted());
-//        return dto;
-//    }
-
 }

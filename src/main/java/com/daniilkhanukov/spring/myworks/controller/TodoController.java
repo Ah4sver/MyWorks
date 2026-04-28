@@ -16,9 +16,6 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-//@RequestMapping("/api/todos")
-//@RequiredArgsConstructor
-//@AllArgsConstructor
 public class TodoController implements TodoApi {
 
     private final TodoService service;
@@ -27,29 +24,16 @@ public class TodoController implements TodoApi {
         this.service = service;
     }
 
-//    @GetMapping
-//    public ResponseEntity<List<TodoDto>> list(@RequestParam Optional<Boolean> completed) {
-//        return ResponseEntity.ok(service.getAll(completed));
-//    }
     @Override
     public List<TodoDto> list(Boolean completed, int limit, int offset) {
         return service.getAll(completed, limit, offset);
     }
 
-//    @GetMapping("/{id}")
-//    public ResponseEntity<TodoDto> get(@PathVariable Long id) {
-//        return ResponseEntity.ok(service.getById(id));
-//    }
     @Override
     public TodoDto get(Long id) {
         return service.getById(id);
     }
 
-    //    @PostMapping
-//    public ResponseEntity<TodoDto> create(@Valid @RequestBody TodoDto dto) {
-//        TodoDto created = service.create(dto);
-//        return ResponseEntity.status(HttpStatus.CREATED).body(created);
-//    }
     @Override
     public TodoDto create(TodoDto dto, HttpServletResponse response) {
         TodoDto created = service.create(dto);
@@ -58,29 +42,17 @@ public class TodoController implements TodoApi {
         return created;
     }
 
-//    @PutMapping("/{id}")
-//    public ResponseEntity<TodoDto> update(@PathVariable Long id, @Valid @RequestBody TodoDto dto) {
-//        return ResponseEntity.ok(service.update(id, dto));
-//    }
     @Override
     public TodoDto update(Long id, TodoDto dto) {
         return service.update(id, dto);
     }
 
-//    @DeleteMapping("/{id}")
-//    public ResponseEntity<Void> delete(@PathVariable Long id) {
-//        service.delete(id);
-//        return ResponseEntity.noContent().build();
-//    }
     @Override
     public void delete(Long id) {
         service.delete(id);
     }
 
-//    @PatchMapping("/{id}/toggle")
-//    public ResponseEntity<TodoDto> toggle(@PathVariable Long id) {
-//        return ResponseEntity.ok(service.toggle(id));
-//    }
+
     @Override
     public TodoDto toggle(Long id) {
         return service.toggle(id);
