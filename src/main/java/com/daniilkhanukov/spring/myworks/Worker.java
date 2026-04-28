@@ -1,10 +1,12 @@
 package com.daniilkhanukov.spring.myworks;
 
 import com.daniilkhanukov.spring.myworks.task.Task;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Worker extends Thread {
     private final Coordinator coordinator;
-
+    private static final Logger log = LoggerFactory.getLogger(Worker.class);
     public Worker(Coordinator coordinator, int id) {
         super("Worker-" + id);
         this.coordinator = coordinator;
@@ -21,6 +23,6 @@ public class Worker extends Thread {
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
-        System.out.println(getName() + " ended");
+        log.info("{} ended", getName());
     }
 }

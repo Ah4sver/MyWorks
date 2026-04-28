@@ -1,10 +1,5 @@
 package com.daniilkhanukov.spring.myworks;
 
-// С ломбок почему-то не работает код
-//import lombok.AllArgsConstructor;
-//import lombok.Getter;
-//import lombok.NoArgsConstructor;
-
 public class KeyValue {
     private final String key;
     private final String value;

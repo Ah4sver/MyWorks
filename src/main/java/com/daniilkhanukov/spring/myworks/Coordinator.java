@@ -19,7 +19,6 @@ public class Coordinator {
     private final Queue<Task> taskQueue = new ArrayDeque<>();
     private final int numMapTasks;
     private final int numReduceTasks;
-    private final Mapper mapper;
     private final Reducer reducer;
 
     // для каждого reduce-id список имён промежуточных файлов, которые нужно обработать
@@ -35,7 +34,6 @@ public class Coordinator {
         this.remainingMapTasks = numMapTasks;
         this.numReduceTasks = numReduceTasks;
         this.remainingReduceTasks = numReduceTasks;
-        this.mapper = mapper;
         this.reducer = reducer;
 
         // создание списка списков
@@ -68,6 +66,7 @@ public class Coordinator {
      * Воркеры сообщают о завершении map задачи и передают имена созданных файлов (map: reduceId -> filename).
      * Если для какого-то reduce файл не создан - в мапе этого reduceId не будет
      */
+    @SuppressWarnings("java:S1172")
     public synchronized void reportMapDone(int mapId, Map<Integer, String> createdFiles) {
         // добавление имён файлов к соответствующим reduce спискам
         for (Map.Entry<Integer, String> e : createdFiles.entrySet()) {
@@ -92,6 +91,7 @@ public class Coordinator {
      * Воркеры сообщают о завершении reduce задачи.
      * Когда все reduce выполнены, меняется флаг done=true и пробуждаются ожидающие
      */
+    @SuppressWarnings("java:S1172")
     public synchronized void reportReduceDone(int reduceId) {
         remainingReduceTasks--;
         if (remainingReduceTasks == 0) {

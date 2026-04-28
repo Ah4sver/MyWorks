@@ -4,6 +4,8 @@ import com.daniilkhanukov.spring.myworks.Coordinator;
 import com.daniilkhanukov.spring.myworks.KeyValue;
 import com.daniilkhanukov.spring.myworks.map.Mapper;
 import com.daniilkhanukov.spring.myworks.Worker;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -18,6 +20,7 @@ public class MapTask implements Task {
     private final String inputFile;
     private final int numReduce;
     private final Mapper mapper;
+    private static final Logger log = LoggerFactory.getLogger(MapTask.class);
 
     public MapTask(int mapId, String inputFile, int numReduce, Mapper mapper) {
         this.mapId = mapId;
@@ -35,7 +38,6 @@ public class MapTask implements Task {
             Map<Integer, List<KeyValue>> buckets = new HashMap<>();
             for (KeyValue kv : pairs) {
                 int r = (kv.getKey().hashCode() & Integer.MAX_VALUE) % numReduce;
-//                System.out.println("mapId=" + mapId + " key=[" + kv.getKey() + "] -> " + r);
                 buckets.computeIfAbsent(r, k -> new ArrayList<>()).add(kv);
             }
 
@@ -52,9 +54,9 @@ public class MapTask implements Task {
                 created.put(r, fileName);
             }
             coordinator.reportMapDone(mapId, created);
-            System.out.println(worker.getName() + " finished MAP " + mapId + " (" + inputFile + ")");
+            log.info("{} finished MAP {} ({})", worker.getName(), mapId, inputFile);
         } catch (IOException e) {
-            System.out.println("MapTask error for " + inputFile + ": " + e.getMessage());
+            log.info("MapTask error for {}: {}", inputFile, e.getMessage());
             coordinator.reportMapDone(mapId, Collections.emptyMap());
         }
     }

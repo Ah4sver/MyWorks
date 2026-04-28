@@ -3,6 +3,8 @@ package com.daniilkhanukov.spring.myworks.task;
 import com.daniilkhanukov.spring.myworks.Coordinator;
 import com.daniilkhanukov.spring.myworks.reduce.Reducer;
 import com.daniilkhanukov.spring.myworks.Worker;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -17,6 +19,7 @@ public class ReduceTask implements Task {
     private final int reduceId;
     private final List<String> intermediateFiles;
     private final Reducer reducer;
+    private static final Logger log = LoggerFactory.getLogger(ReduceTask.class);
 
     public ReduceTask(int reduceId, List<String> intermediateFiles, Reducer reducer) {
         this.reduceId = reduceId;
@@ -60,9 +63,9 @@ public class ReduceTask implements Task {
             }
 
             coordinator.reportReduceDone(reduceId);
-            System.out.println(worker.getName() + " finished REDUCE " + reduceId + " -> " + outFile.getFileName());
+            log.info("{} finished REDUCE {} -> {}",worker.getName(), reduceId, outFile.getFileName());
         } catch (IOException ex) {
-            System.err.println("ReduceTask error for reduceId=" + reduceId + ": " + ex.getMessage());
+            log.info("ReduceTask error for reduceId= {}: {}", reduceId, ex.getMessage());
 
             coordinator.reportReduceDone(reduceId);
         }

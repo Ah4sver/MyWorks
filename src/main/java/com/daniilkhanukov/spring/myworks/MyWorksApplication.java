@@ -4,6 +4,8 @@ import com.daniilkhanukov.spring.myworks.map.Mapper;
 import com.daniilkhanukov.spring.myworks.map.WordCountMapper;
 import com.daniilkhanukov.spring.myworks.reduce.Reducer;
 import com.daniilkhanukov.spring.myworks.reduce.WordCountReducer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import java.io.IOException;
@@ -21,6 +23,8 @@ import java.util.List;
 public class MyWorksApplication {
 
     public static void main(String[] args) throws InterruptedException, IOException {
+
+        Logger log = LoggerFactory.getLogger(MyWorksApplication.class);
         // Примеры входных файлов
         List<String> inputs = List.of("file1.txt", "file2.txt", "file3.txt", "file4.txt", "file5.txt", "file6.txt", "file7.txt");
         createSampleIfMissing(inputs);
@@ -50,7 +54,7 @@ public class MyWorksApplication {
             t.join();
         }
 
-        System.out.println("MapReduce finished. Check directory 'output' for mr-out-*.txt");
+        log.info("MapReduce finished. Check directory 'output' for mr-out-*.txt");
     }
 
     private static void createSampleIfMissing(List<String> files) throws IOException {
@@ -67,8 +71,6 @@ public class MyWorksApplication {
             Path p = Path.of(files.get(i));
                 Files.writeString(p, sample[i % sample.length]);
         }
-
-//        SpringApplication.run(MyWorksApplication.class, args);
     }
 
 }
