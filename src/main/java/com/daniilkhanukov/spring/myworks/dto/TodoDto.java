@@ -6,11 +6,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @NoArgsConstructor
 public class TodoDto {
-
     private Long id;
 
     @NotBlank(message = "Title is required")
@@ -18,6 +19,6 @@ public class TodoDto {
     private String title;
 
     private String description;
-
     private Boolean completed;
+    private LocalDateTime createdAt;
 }

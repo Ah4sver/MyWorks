@@ -1,8 +1,10 @@
 package com.daniilkhanukov.spring.myworks.controller;
 
+import com.daniilkhanukov.spring.myworks.api.TodoApi;
 import com.daniilkhanukov.spring.myworks.dto.TodoDto;
 import com.daniilkhanukov.spring.myworks.entity.Todo;
 import com.daniilkhanukov.spring.myworks.service.TodoService;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
@@ -14,10 +16,10 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/todos")
+//@RequestMapping("/api/todos")
 //@RequiredArgsConstructor
 //@AllArgsConstructor
-public class TodoController {
+public class TodoController implements TodoApi {
 
     private final TodoService service;
 
@@ -25,35 +27,62 @@ public class TodoController {
         this.service = service;
     }
 
-    @GetMapping
-    public ResponseEntity<List<TodoDto>> list(@RequestParam Optional<Boolean> completed) {
-        return ResponseEntity.ok(service.getAll(completed));
+//    @GetMapping
+//    public ResponseEntity<List<TodoDto>> list(@RequestParam Optional<Boolean> completed) {
+//        return ResponseEntity.ok(service.getAll(completed));
+//    }
+    @Override
+    public List<TodoDto> list(Boolean completed, int limit, int offset) {
+        return service.getAll(completed, limit, offset);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<TodoDto> get(@PathVariable Long id) {
-        return ResponseEntity.ok(service.getById(id));
+//    @GetMapping("/{id}")
+//    public ResponseEntity<TodoDto> get(@PathVariable Long id) {
+//        return ResponseEntity.ok(service.getById(id));
+//    }
+    @Override
+    public TodoDto get(Long id) {
+        return service.getById(id);
     }
 
-    @PostMapping
-    public ResponseEntity<TodoDto> create(@Valid @RequestBody TodoDto dto) {
+    //    @PostMapping
+//    public ResponseEntity<TodoDto> create(@Valid @RequestBody TodoDto dto) {
+//        TodoDto created = service.create(dto);
+//        return ResponseEntity.status(HttpStatus.CREATED).body(created);
+//    }
+    @Override
+    public TodoDto create(TodoDto dto, HttpServletResponse response) {
         TodoDto created = service.create(dto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(created);
+        // установить Location header без ResponseEntity
+        response.setHeader("Location", "/api/todos/" + created.getId());
+        return created;
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<TodoDto> update(@PathVariable Long id, @Valid @RequestBody TodoDto dto) {
-        return ResponseEntity.ok(service.update(id, dto));
+//    @PutMapping("/{id}")
+//    public ResponseEntity<TodoDto> update(@PathVariable Long id, @Valid @RequestBody TodoDto dto) {
+//        return ResponseEntity.ok(service.update(id, dto));
+//    }
+    @Override
+    public TodoDto update(Long id, TodoDto dto) {
+        return service.update(id, dto);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+//    @DeleteMapping("/{id}")
+//    public ResponseEntity<Void> delete(@PathVariable Long id) {
+//        service.delete(id);
+//        return ResponseEntity.noContent().build();
+//    }
+    @Override
+    public void delete(Long id) {
         service.delete(id);
-        return ResponseEntity.noContent().build();
     }
 
-    @PatchMapping("/{id}/toggle")
-    public ResponseEntity<TodoDto> toggle(@PathVariable Long id) {
-        return ResponseEntity.ok(service.toggle(id));
+//    @PatchMapping("/{id}/toggle")
+//    public ResponseEntity<TodoDto> toggle(@PathVariable Long id) {
+//        return ResponseEntity.ok(service.toggle(id));
+//    }
+    @Override
+    public TodoDto toggle(Long id) {
+        return service.toggle(id);
     }
 }
