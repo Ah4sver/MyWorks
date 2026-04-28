@@ -1,5 +1,8 @@
 package com.daniilkhanukov.spring.myworks;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -15,6 +18,8 @@ public class RingBuffer {
         this.capacity = capacity;
         buffer = new int[capacity];
     }
+
+    private static final Logger log = LoggerFactory.getLogger(RingBuffer.class);
 
     private final Lock lock = new ReentrantLock();
     private final Condition notEmpty = lock.newCondition();
@@ -58,7 +63,7 @@ public class RingBuffer {
             try {
                 for (int i = 0; i < 23; i++) {
                     ringBuffer.put(i);
-                    System.out.println("Вставлено значение " + i);
+                    log.info("Вставлено значение {}", i);
                     Thread.sleep(1000);
                 }
             } catch (InterruptedException e) {
@@ -70,7 +75,7 @@ public class RingBuffer {
             try {
                 for (int i = 0; i < 23; i++) {
                     int item = ringBuffer.get();
-                    System.out.println("Получено значение: " + item);
+                    log.info("Получено значение: {}", item);
                     Thread.sleep(2500);
                 }
             } catch (InterruptedException e) {
@@ -83,6 +88,6 @@ public class RingBuffer {
 
         producer.join();
         consumer.join();
-        System.out.println("Конец");
+        log.info("Конец");
     }
 }
