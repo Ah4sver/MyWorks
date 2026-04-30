@@ -49,16 +49,21 @@ public class  JdbcTodoRepository {
 
     public Todo save(Todo t) {
         if (t.getId() == null) {
-            String sql = "INSERT INTO todos (title, description, completed) VALUES (?, ?, ?)";
-            KeyHolder kh = new GeneratedKeyHolder();
-            jdbcTemplate.update(conn -> {
-                PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-                ps.setString(1, t.getTitle());
-                ps.setString(2, t.getDescription());
-                ps.setBoolean(3, t.isCompleted());
-                return ps;
-            }, kh);
-            t.setId(kh.getKey().longValue());
+            String sql = """
+                INSERT INTO todos (title, description, completed)
+                VALUES (?, ?, ?)
+                RETURNING id
+                """;
+
+            Long id = jdbcTemplate.queryForObject(
+                    sql,
+                    Long.class,
+                    t.getTitle(),
+                    t.getDescription(),
+                    t.isCompleted()
+            );
+
+            t.setId(id);
             return t;
         } else {
             String sql = "UPDATE todos SET title = ?, description = ?, completed = ? WHERE id = ?";
