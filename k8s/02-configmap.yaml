@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kafka-connection-config
+  namespace: auth-demo
+data:
+  SPRING_KAFKA_BOOTSTRAP_SERVERS: "kafka.auth-demo.svc.cluster.local:29092"
+  KAFKA_BOOTSTRAP_SERVERS: "kafka.auth-demo.svc.cluster.local:29092"
