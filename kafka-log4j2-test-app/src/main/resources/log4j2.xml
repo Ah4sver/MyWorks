@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN" monitorInterval="30">
+
+    <Appenders>
+        <!-- Резервный консольный аппендер, если Kafka временно недоступна -->
+        <Console name="ConsoleAppender" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+        </Console>
+
+        <!-- Кастомный аппендер из kafka-log4j2-appender -->
+        <KafkaAppender name="KafkaAppender"
+                       bootstrapServers="localhost:9092"
+                       topic="app-logs"
+                       key="kafka-log4j2-test-app"
+                       syncSend="false"
+                       sendTimeoutMs="5000"
+                       ignoreExceptions="true">
+            <PatternLayout pattern="%d{ISO8601} [%t] %-5level %logger{36} - %msg%n"/>
+            <Property name="acks">1</Property>
+            <Property name="client.id">kafka-log4j2-test-app</Property>
+        </KafkaAppender>
+    </Appenders>
+
+    <Loggers>
+        <Logger name="org.apache.kafka" level="WARN" additivity="false">
+            <AppenderRef ref="ConsoleAppender"/>
+        </Logger>
+        <Root level="INFO">
+            <AppenderRef ref="ConsoleAppender"/>
+            <AppenderRef ref="KafkaAppender"/>
+        </Root>
+    </Loggers>
+</Configuration>
