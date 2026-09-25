@@ -1,0 +1,11 @@
+app:
+  base-url: http://localhost:8080
+  short-code:
+    length: 7
+
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: validate
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.yml
