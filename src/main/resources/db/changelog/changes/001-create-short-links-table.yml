@@ -1,0 +1,42 @@
+databaseChangeLog:
+  - changeSet:
+      id: 001-create-short-links-table
+      author: developer
+      changes:
+        - createTable:
+            tableName: short_links
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: short_link
+                  type: VARCHAR(64)
+                  constraints:
+                    nullable: false
+                    unique: true
+                    uniqueConstraintName: uc_short_links_short_code
+              - column:
+                  name: long_link
+                  type: TEXT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: alias
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: TIMESTAMP WITH TIME ZONE
+                  constraints:
+                    nullable: false
+              - column:
+                  name: expires_at
+                  type: TIMESTAMP WITH TIME ZONE
+                  constraints:
+                    nullable: true
