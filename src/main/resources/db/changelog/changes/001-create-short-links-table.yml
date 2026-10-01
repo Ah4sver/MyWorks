@@ -40,10 +40,3 @@ databaseChangeLog:
                   type: TIMESTAMP WITH TIME ZONE
                   constraints:
                     nullable: true
-        - createIndex:
-            indexName: idx_short_links_short_code
-            tableName: short_links
-            unique: true
-            columns:
-              - column:
-                  name: short_link

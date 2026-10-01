@@ -2,7 +2,10 @@ package com.daniilkhanukov.spring.myworks.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
+import java.time.Clock;
 import java.time.OffsetDateTime;
 
 @Entity
@@ -18,10 +21,11 @@ public class ShortLink {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "short_link", nullable = false, length = 100, unique = true)
+    @Column(name = "short_link", nullable = false, length = 64, unique = true)
     private String shortLink;
 
-    @Column(name = "long_link", nullable = false)
+    @Column(name = "long_link", nullable = false, columnDefinition = "TEXT")
+    @JdbcTypeCode(SqlTypes.LONGVARCHAR)
     private String longLink;
 
     @Column(name = "alias", nullable = false)
@@ -33,8 +37,8 @@ public class ShortLink {
     @Column(name = "expires_at")
     private OffsetDateTime expiresAt;
 
-    public boolean isExpired() {
-        return expiresAt != null && expiresAt.isBefore(OffsetDateTime.now());
+    public boolean isExpired(Clock clock) {
+        return expiresAt != null && expiresAt.isBefore(OffsetDateTime.now(clock));
     }
 
 }

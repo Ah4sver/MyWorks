@@ -4,8 +4,8 @@ import java.time.OffsetDateTime;
 
 public record ShortenResponse(
         String shortUrl,
-        String shortCode,
-        String originalUrl,
+        String shortLink,
+        String longLink,
         OffsetDateTime createdAt,
         OffsetDateTime expiresAt
 ) {

@@ -1,6 +1,8 @@
 package com.daniilkhanukov.spring.myworks.controller;
 
 import com.daniilkhanukov.spring.myworks.dto.ShortenRequest;
+import com.daniilkhanukov.spring.myworks.entity.ShortLink;
+import com.daniilkhanukov.spring.myworks.repository.ShortLinkRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +15,7 @@ import org.testcontainers.postgresql.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import java.time.Clock;
 import java.time.OffsetDateTime;
 
 import static org.hamcrest.Matchers.*;
@@ -34,6 +37,10 @@ class ShortenControllerIntegrationTest {
 
     @Autowired
     private ObjectMapper objectMapper;
+    @Autowired
+    private ShortLinkRepository shortLinkRepository;
+    @Autowired
+    private Clock clock;
 
     @Test
     void shorten_createsLinkAndRedirectWorks() throws Exception {
@@ -43,11 +50,11 @@ class ShortenControllerIntegrationTest {
                         .contentType("application/json")
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.shortCode", not(emptyString())))
-                .andExpect(jsonPath("$.originalUrl", is("https://www.example.com/some/long/path")))
+                .andExpect(jsonPath("$.shortLink", not(emptyString())))
+                .andExpect(jsonPath("$.longLink", is("https://www.example.com/some/long/path")))
                 .andReturn().getResponse().getContentAsString();
 
-        String shortCode = objectMapper.readTree(responseBody).get("shortCode").asText();
+        String shortCode = objectMapper.readTree(responseBody).get("shortLink").asText();
 
         mockMvc.perform(get("/{code}", shortCode))
                 .andExpect(status().isFound())
@@ -63,7 +70,7 @@ class ShortenControllerIntegrationTest {
                         .contentType("application/json")
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.shortCode", is(alias)));
+                .andExpect(jsonPath("$.shortLink", is(alias)));
 
         mockMvc.perform(get("/{code}", alias))
                 .andExpect(status().isFound())
@@ -99,20 +106,19 @@ class ShortenControllerIntegrationTest {
 
     @Test
     void redirect_withExpiredLink_returnsGone() throws Exception {
-        ShortenRequest request = new ShortenRequest(
-                "https://example.com/expiring",
-                "expiring-alias",
-                OffsetDateTime.now().plusSeconds(2)
-        );
+        OffsetDateTime now = OffsetDateTime.now(clock);
 
-        mockMvc.perform(post("/api/v1/links")
-                        .contentType("application/json")
-                        .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isCreated());
+        ShortLink expiredLink = ShortLink.builder()
+                .shortLink("expired-alias")
+                .longLink("https://example.com/expiring")
+                .alias(true)
+                .createdAt(now.minusDays(1))
+                .expiresAt(now.minusMinutes(1))
+                .build();
 
-        Thread.sleep(3000);
+        shortLinkRepository.saveAndFlush(expiredLink);
 
-        mockMvc.perform(get("/{code}", "expiring-alias"))
+        mockMvc.perform(get("/{code}", "expired-alias"))
                 .andExpect(status().isGone());
     }
 

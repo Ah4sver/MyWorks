@@ -4,14 +4,16 @@ import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+import org.hibernate.validator.constraints.URL;
 
 import java.time.OffsetDateTime;
 
 public record ShortenRequest(
 
-        @NotBlank
-        @Pattern(
-                regexp = "^(https?)://[^\\s/$.?#].[^\\s]*$",
+        @NotBlank(message = "url must not be blank")
+        @Size(max = 2048, message = "url must not exceed 2048 characters")
+        @URL(
+                regexp = "^https?://.*",
                 message = "url must be a valid http/https URL"
         )
         String url,

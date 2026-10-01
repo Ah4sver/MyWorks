@@ -17,9 +17,9 @@ public class RedirectController {
 
     private final ShortLinkService shortLinkService;
 
-    @GetMapping("/{shortUrl}")
-    public ResponseEntity<Void> redirect(@PathVariable String shortUrl) {
-        String origUrl = shortLinkService.resolveOriginalUrl(shortUrl);
+    @GetMapping("/{shortLink}")
+    public ResponseEntity<Void> redirect(@PathVariable String shortLink) {
+        String origUrl = shortLinkService.resolveOriginalUrl(shortLink);
         return ResponseEntity.status(HttpStatus.FOUND)
                 .location(URI.create(origUrl))
                 .header(HttpHeaders.CACHE_CONTROL, "no-cache")

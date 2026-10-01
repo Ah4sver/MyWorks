@@ -42,7 +42,13 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ErrorResponse> handleIllegalArgument(IllegalArgumentException ex){
-        return ResponseEntity.status(HttpStatus.CONFLICT)
+        return ResponseEntity.badRequest()
                 .body(new ErrorResponse(OffsetDateTime.now(), 400, "Bad Request", List.of(ex.getMessage())));
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponse> handleUnexpected(Exception ex) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new ErrorResponse(OffsetDateTime.now(), 500, "Internal Error", List.of("Unexpected error occurred")));
     }
 }
