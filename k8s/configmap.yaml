@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: url-shortener-config
+data:
+  SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/url_shortener
+  APP_BASE_URL: http://url-shortener.local
+  APP_SHORT_CODE_LENGTH: "7"
